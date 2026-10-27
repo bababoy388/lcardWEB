@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <title>L-Card Мониторинг</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header class="topbar">
+        <div class="brand">L-Card LTR24</div>
+        <a href="/settings" class="btn-ghost">Настройки</a>
+    </header>
+
+    <main class="layout">
+        <div class="card">
+            <h2>Осциллограмма <span id="statusBadge">Offline</span></h2>
+            <img id="waveImg" src="/api/plot/wave" style="width:100%; border-radius:6px;">
+            <div class="controls">
+                <button onclick="api('/api/start')">СТАРТ</button>
+                <button onclick="api('/api/stop')">СТОП</button>
+                <button onclick="document.getElementById('waveImg').src='/api/plot/wave?_='+Date.now()">🔄 Обновить</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        async function api(path) {
+            await fetch(path);
+            alert("Команда отправлена");
+        }
+        async function updateStatus() {
+            try {
+                const r = await fetch('/api/status');
+                const d = await r.json();
+                document.getElementById('statusBadge').textContent = d.running ? "Работает" : "Остановлен";
+                document.getElementById('statusBadge').style.color = d.running ? "#3fb950" : "#f85149";
+            } catch (e) {}
+        }
+        setInterval(updateStatus, 1000);
+        setInterval(() => {
+            document.getElementById('waveImg').src = '/api/plot/wave?_=' + Date.now();
+        }, 2000);
+    </script>
+</body>
+</html>

@@ -1,6 +1,8 @@
 fastapi
 uvicorn[standard]
 httpx
-jinja2
 numpy
+scipy
+websockets
 matplotlib
+jinja2
